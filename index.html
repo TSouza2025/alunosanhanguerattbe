@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classroom Document Manager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #3a5a78;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+        .auth-container {
+            max-width: 400px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .dashboard-container {
+            display: none;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="password"],
+        input[type="email"] {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        button {
+            background-color: #3a5a78;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        button:hover {
+            background-color: #2c4760;
+        }
+        .folders {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .folder {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 1rem;
+            width: calc(33% - 1rem);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .folder:hover {
+            background-color: #e9ecef;
+            transform: translateY(-3px);
+        }
+        .folder-icon {
+            color: #ffc107;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .documents {
+            margin-top: 2rem;
+            display: none;
+        }
+        .document {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem;
+            border-bottom: 1px solid #eee;
+        }
+        .document:hover {
+            background-color: #f8f9fa;
+        }
+        .document-icon {
+            margin-right: 1rem;
+            color: #6c757d;
+        }
+        .logout-btn {
+            background-color: #dc3545;
+            float: right;
+        }
+        .logout-btn:hover {
+            background-color: #bd2130;
+        }
+        .back-btn {
+            background-color: #6c757d;
+            margin-right: 1rem;
+        }
+        .back-btn:hover {
+            background-color: #5a6268;
+        }
+        .upload-container {
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+        }
+        .nav-buttons {
+            margin-bottom: 1.5rem;
+        }
+        .toggle-auth {
+            text-align: center;
+            margin-top: 1rem;
+        }
+        .toggle-auth a {
+            color: #3a5a78;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .toggle-auth a:hover {
+            text-decoration: underline;
+        }
+        .secondary-btn {
+            background-color: #6c757d;
+            margin-right: 0.5rem;
+        }
+        .secondary-btn:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Classroom Document Manager</h1>
+    </header>
+    
+    <div class="container">
+        <!-- Login Form -->
+        <div id="login-section" class="auth-container">
+            <h2>Login to Access Documents</h2>
+            <div class="form-group">
+                <label for="login-username">Username</label>
+                <input type="text" id="login-username" placeholder="Enter your username">
+            </div>
+            <div class="form-group">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" placeholder="Enter your password">
+            </div>
+            <button id="login-btn">Login</button>
+            <p id="login-error" style="color: red; display: none;">Invalid username or password</p>
+            <div class="toggle-auth">
+                <p>Don't have an account? <a id="show-register">Register here</a></p>
+            </div>
+        </div>
+        
+        <!-- Registration Form -->
+        <div id="register-section" class="auth-container" style="display: none;">
+            <h2>Create New Account</h2>
+            <div class="form-group">
+                <label for="register-fullname">Full Name</label>
+                <input type="text" id="register-fullname" placeholder="Enter your full name">
+            </div>
+            <div class="form-group">
+                <label for="register-username">Username</label>
+                <input type="text" id="register-username" placeholder="Choose a username">
+            </div>
+            <div class="form-group">
+                <label for="register-email">Email</label>
+                <input type="email" id="register-email" placeholder="Enter your email">
+            </div>
+            <div class="form-group">
+                <label for="register-password">Password</label>
+                <input type="password" id="register-password" placeholder="Choose a password">
+            </div>
+            <div class="form-group">
+                <label for="register-confirm">Confirm Password</label>
+                <input type="password" id="register-confirm" placeholder="Confirm your password">
+            </div>
+            <button id="register-btn">Register</button>
+            <p id="register-error" style="color: red; display: none;"></p>
+            <p id="register-success" style="color: green; display: none;">Registration successful! You can now log in.</p>
+            <div class="toggle-auth">
+                <p>Already have an account? <a id="show-login">Login here</a></p>
+            </div>
+        </div>
+        
+        <!-- Dashboard -->
+        <div id="dashboard-section" class="dashboard-container">
+            <div class="nav-buttons">
+                <button id="logout-btn" class="logout-btn">Logout</button>
+                <div style="clear: both;"></div>
+            </div>
+            
+            <h2>Welcome, <span id="user-name">Student</span>!</h2>
+            
+            <!-- Main Folders View -->
+            <div id="folders-view">
+                <h3>Course Folders</h3>
+                <div class="folders" id="folders-container">
+                    <!-- Folders will be added dynamically -->
+                </div>
+                
+                <div class="upload-container">
+                    <h3>Create New Folder</h3>
+                    <div class="form-group">
+                        <label for="new-folder">Folder Name</label>
+                        <input type="text" id="new-folder" placeholder="Enter folder name">
+                    </div>
+                    <button id="create-folder-btn">Create Folder</button>
+                </div>
+            </div>
+            
+            <!-- Documents View -->
+            <div id="documents-view" style="display: none;">
+                <div class="nav-buttons">
+                    <button id="back-to-folders" class="back-btn">Back to Folders</button>
+                </div>
+                <h3>Documents in <span id="current-folder">Folder</span></h3>
+                <div class="documents" id="documents-container">
+                    <!-- Documents will be added dynamically -->
+                </div>
+                
+                <div class="upload-container">
+                    <h3>Upload New Document</h3>
+                    <div class="form-group">
+                        <label for="document-name">Document Name</label>
+                        <input type="text" id="document-name" placeholder="Enter document name">
+                    </div>
+                    <div class="form-group">
+                        <label for="document-description">Description (Optional)</label>
+                        <input type="text" id="document-description" placeholder="Enter a short description">
+                    </div>
+                    <div class="form-group">
+                        <label for="document-file">Select File</label>
+                        <input type="file" id="document-file">
+                    </div>
+                    <button id="upload-document-btn">Upload Document</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data - in a real application, this would come from a database
+        const users = [
+            { username: "student1", password: "password1", name: "Alex Student", email: "alex@example.com" },
+            { username: "student2", password: "password2", name: "Sam Student", email: "sam@example.com" }
+        ];
+        
+        let folders = [
+            { id: 1, name: "Week 1 - Introduction" },
+            { id: 2, name: "Week 2 - Fundamentals" },
+            { id: 3, name: "Week 3 - Advanced Topics" },
+            { id: 4, name: "Assignments" },
+            { id: 5, name: "Exam Preparation" }
+        ];
+        
+        let documents = {
+            1: [ // Week 1 documents
+                { id: 1, name: "Course Syllabus.pdf", type: "pdf", size: "256 KB", date: "2025-03-01" },
+                { id: 2, name: "Introduction Slides.pptx", type: "pptx", size: "1.2 MB", date: "2025-03-01" }
+            ],
+            2: [ // Week 2 documents
+                { id: 3, name: "Fundamentals Lecture Notes.docx", type: "docx", size: "348 KB", date: "2025-03-08" },
+                { id: 4, name: "Practice Problems.pdf", type: "pdf", size: "512 KB", date: "2025-03-08" }
+            ],
+            3: [ // Week 3 documents
+                { id: 5, name: "Advanced Topics Guide.pdf", type: "pdf", size: "1.5 MB", date: "2025-03-15" }
+            ],
+            4: [ // Assignments
+                { id: 6, name: "Assignment 1.pdf", type: "pdf", size: "420 KB", date: "2025-03-05" },
+                { id: 7, name: "Assignment 2.pdf", type: "pdf", size: "385 KB", date: "2025-03-12" }
+            ],
+            5: [ // Exam Preparation
+                { id: 8, name: "Study Guide.pdf", type: "pdf", size: "720 KB", date: "2025-03-20" },
+                { id: 9, name: "Practice Exam.pdf", type: "pdf", size: "690 KB", date: "2025-03-20" }
+            ]
+        };
+        
+        // Current user and selected folder
+        let currentUser = null;
+        let currentFolder = null;
+        
+        // DOM Elements
+        const loginSection = document.getElementById('login-section');
+        const registerSection = document.getElementById('register-section');
+        const dashboardSection = document.getElementById('dashboard-section');
+        const foldersView = document.getElementById('folders-view');
+        const documentsView = document.getElementById('documents-view');
+        const foldersContainer = document.getElementById('folders-container');
+        const documentsContainer = document.getElementById('documents-container');
+        
+        // Show Register Form
+        document.getElementById('show-register').addEventListener('click', function() {
+            loginSection.style.display = 'none';
+            registerSection.style.display = 'block';
+            // Clear any previous form data and messages
+            document.getElementById('register-error').style.display = 'none';
+            document.getElementById('register-success').style.display = 'none';
+            document.getElementById('register-fullname').value = '';
+            document.getElementById('register-username').value = '';
+            document.getElementById('register-email').value = '';
+            document.getElementById('register-password').value = '';
+            document.getElementById('register-confirm').value = '';
+        });
+        
+        // Show Login Form
+        document.getElementById('show-login').addEventListener('click', function() {
+            registerSection.style.display = 'none';
+            loginSection.style.display = 'block';
+            // Clear any previous form data and messages
+            document.getElementById('login-error').style.display = 'none';
+            document.getElementById('login-username').value = '';
+            document.getElementById('login-password').value = '';
+        });
+        
+        // Registration functionality
+        document.getElementById('register-btn').addEventListener('click', function() {
+            const fullname = document.getElementById('register-fullname').value.trim();
+            const username = document.getElementById('register-username').value.trim();
+            const email = document.getElementById('register-email').value.trim();
+            const password = document.getElementById('register-password').value;
+            const confirm = document.getElementById('register-confirm').value;
+            
+            // Clear previous error messages
+            document.getElementById('register-error').style.display = 'none';
+            document.getElementById('register-success').style.display = 'none';
+            
+            // Validate inputs
+            if (!fullname || !username || !email || !password || !confirm) {
+                document.getElementById('register-error').textContent = 'All fields are required';
+                document.getElementById('register-error').style.display = 'block';
+                return;
+            }
+            
+            if (password !== confirm) {
+                document.getElementById('register-error').textContent = 'Passwords do not match';
+                document.getElementById('register-error').style.display = 'block';
+                return;
+            }
+            
+            // Check if username already exists
+            if (users.some(user => user.username === username)) {
+                document.getElementById('register-error').textContent = 'Username already exists';
+                document.getElementById('register-error').style.display = 'block';
+                return;
+            }
+            
+            // Check if email already exists
+            if (users.some(user => user.email === email)) {
+                document.getElementById('register-error').textContent = 'Email already registered';
+                document.getElementById('register-error').style.display = 'block';
+                return;
+            }
+            
+            // Add new user
+            const newUser = {
+                username: username,
+                password: password,
+                name: fullname,
+                email: email
+            };
+            
+            users.push(newUser);
+            
+            // Show success message
+            document.getElementById('register-success').style.display = 'block';
+            
+            // Clear form
+            document.getElementById('register-fullname').value = '';
+            document.getElementById('register-username').value = '';
+            document.getElementById('register-email').value = '';
+            document.getElementById('register-password').value = '';
+            document.getElementById('register-confirm').value = '';
+            
+            // Automatically switch to login after a delay
+            setTimeout(function() {
+                registerSection.style.display = 'none';
+                loginSection.style.display = 'block';
+            }, 3000);
+        });
+        
+        // Login functionality
+        document.getElementById('login-btn').addEventListener('click', function() {
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            
+            const user = users.find(u => u.username === username && u.password === password);
+            
+            if (user) {
+                currentUser = user;
+                document.getElementById('user-name').textContent = user.name;
+                loginSection.style.display = 'none';
+                dashboardSection.style.display = 'block';
+                document.getElementById('login-error').style.display = 'none';
+                
+                // Load folders
+                renderFolders();
+            } else {
+                document.getElementById('login-error').style.display = 'block';
+            }
+        });
+        
+        // Logout functionality
+        document.getElementById('logout-btn').addEventListener('click', function() {
+            currentUser = null;
+            loginSection.style.display = 'block';
+            dashboardSection.style.display = 'none';
+            document.getElementById('login-username').value = '';
+            document.getElementById('login-password').value = '';
+        });
+        
+        // Create Folder functionality
+        document.getElementById('create-folder-btn').addEventListener('click', function() {
+            const folderName = document.getElementById('new-folder').value.trim();
+            
+            if (folderName) {
+                const newId = folders.length > 0 ? Math.max(...folders.map(f => f.id)) + 1 : 1;
+                const newFolder = { id: newId, name: folderName };
+                folders.push(newFolder);
+                documents[newId] = []; // Initialize empty document array for this folder
+                
+                renderFolders();
+                document.getElementById('new-folder').value = '';
+            }
+        });
+        
+        // Back to folders button
+        document.getElementById('back-to-folders').addEventListener('click', function() {
+            foldersView.style.display = 'block';
+            documentsView.style.display = 'none';
+            currentFolder = null;
+        });
+        
+        // Upload document functionality
+        document.getElementById('upload-document-btn').addEventListener('click', function() {
+            const documentName = document.getElementById('document-name').value.trim();
+            const documentFile = document.getElementById('document-file').files[0];
+            
+            if (documentName && documentFile && currentFolder) {
+                // Get file extension
+                const fileExtension = documentFile.name.split('.').pop().toLowerCase();
+                
+                // Create new document object
+                const newId = Math.max(...Object.values(documents).flat().map(d => d.id)) + 1;
+                const newDocument = {
+                    id: newId,
+                    name: documentName + (documentName.includes('.') ? '' : '.' + fileExtension),
+                    type: fileExtension,
+                    size: formatFileSize(documentFile.size),
+                    date: new Date().toISOString().split('T')[0] // Current date in YYYY-MM-DD format
+                };
+                
+                // Add to documents
+                documents[currentFolder].push(newDocument);
+                
+                // Refresh documents view
+                renderDocuments(currentFolder);
+                
+                // Clear form
+                document.getElementById('document-name').value = '';
+                document.getElementById('document-description').value = '';
+                document.getElementById('document-file').value = '';
+            }
+        });
+        
+        // Helper function to format file size
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+            else return (bytes / 1048576).toFixed(1) + ' MB';
+        }
+        
+        // Render folders
+        function renderFolders() {
+            foldersContainer.innerHTML = '';
+            
+            folders.forEach(folder => {
+                const folderElement = document.createElement('div');
+                folderElement.className = 'folder';
+                folderElement.innerHTML = `
+                    <div class="folder-icon">📁</div>
+                    <h4>${folder.name}</h4>
+                    <p>${documents[folder.id] ? documents[folder.id].length : 0} documents</p>
+                `;
+                
+                folderElement.addEventListener('click', function() {
+                    currentFolder = folder.id;
+                    document.getElementById('current-folder').textContent = folder.name;
+                    renderDocuments(folder.id);
+                    foldersView.style.display = 'none';
+                    documentsView.style.display = 'block';
+                });
+                
+                foldersContainer.appendChild(folderElement);
+            });
+        }
+        
+        // Render documents for a folder
+        function renderDocuments(folderId) {
+            documentsContainer.innerHTML = '';
+            documentsContainer.style.display = 'block';
+            
+            const folderDocuments = documents[folderId] || [];
+            
+            if (folderDocuments.length === 0) {
+                documentsContainer.innerHTML = '<p>No documents in this folder yet.</p>';
+                return;
+            }
+            
+            folderDocuments.forEach(doc => {
+                // Determine icon based on document type
+                let icon = '📄';
+                if (doc.type === 'pdf') icon = '📕';
+                else if (doc.type === 'docx' || doc.type === 'doc') icon = '📘';
+                else if (doc.type === 'pptx' || doc.type === 'ppt') icon = '📙';
+                else if (doc.type === 'xlsx' || doc.type === 'xls') icon = '📗';
+                
+                const docElement = document.createElement('div');
+                docElement.className = 'document';
+                docElement.innerHTML = `
+                    <div class="document-icon">${icon}</div>
+                    <div>
+                        <h4>${doc.name}</h4>
+                        <p>${doc.size} • Uploaded on ${doc.date}</p>
+                    </div>
+                `;
+                
+                // In a real application, add download functionality here
+                docElement.addEventListener('click', function() {
+                    alert(`In a real application, this would download ${doc.name}`);
+                });
+                
+                documentsContainer.appendChild(docElement);
+            });
+        }
+    </script>
+</body>
+</html>
